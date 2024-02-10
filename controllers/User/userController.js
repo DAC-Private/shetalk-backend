@@ -38,9 +38,13 @@ const edit_user_profile = async (req, res) => {
       user.profile = file.filename;
       await user.save();
 
-      res.status(200).json({ message: "Profile sukses dirubah!" });
+      res
+        .status(200)
+        .json({ success: true, message: "Profile sukses dirubah!" });
     } else {
-      return res.status(400).json({ message: "Ukuran minimal 10MB!" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Ukuran minimal 10MB!" });
     }
   } catch (error) {
     return await res.status(500).json({
@@ -86,13 +90,10 @@ const edit_user_ = async (req, res) => {
     }
     data.name = req.body.name;
     data.email = req.body.email;
-
+    const recentPassword = req.body.recent_password;
     if (req.body.hasOwnProperty("recent_password")) {
       // console.log();
-      const comparePass = bcrypt.compareSync(
-        req.body.recent_password,
-        users.password
-      );
+      const comparePass = bcrypt.compareSync(recentPassword, users.password);
       if (!comparePass) {
         return await res.status(422).json({
           success: false,
@@ -100,6 +101,12 @@ const edit_user_ = async (req, res) => {
         });
       }
       const newPassword = req.body.new_password;
+      if (newPassword == recentPassword) {
+        return await res.status(422).json({
+          success: false,
+          message: "Password ini telah digunakan sebelumnya!",
+        });
+      }
       if (!newPassword) {
         return await res.status(422).json({
           success: false,

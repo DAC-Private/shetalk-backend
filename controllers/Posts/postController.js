@@ -3,11 +3,14 @@ const { Post, Topic, User, Avatar } = require("../../database/models/");
 const { jsonResponse } = require("../../utils/response.utils");
 const hashMake = require("../../utils/hash.utils");
 const { validationResult } = require("express-validator");
+const { Op } = require("sequelize");
 
 const md5 = require("js-md5");
 const index = async (req, res) => {
   try {
-    const { page = 1, size = 10 } = req.query;
+    const { page = 1, size = 10, title } = req.query;
+    const whereClause = title ? { title: { [Op.like]: `%${title}%` } } : {};
+
     const offset = (page - 1) * size;
     const limit = size;
     const { count, rows: posts } = await Post.findAndCountAll({
@@ -36,6 +39,7 @@ const index = async (req, res) => {
           ],
         },
       ],
+      where: whereClause,
       offset: parseInt(offset),
       limit: parseInt(limit),
       order: [["createdAt", "DESC"]],

@@ -26,6 +26,7 @@ module.exports = async (req, res, next) => {
         role: user.role,
         profiles: user.profiles,
         sertifikat: user.sertifikat,
+        total_answered: user.total_answered,
       };
       req.token = token;
       req.user = data;

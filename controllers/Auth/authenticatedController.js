@@ -34,6 +34,7 @@ const login = async (req, res) => {
           role: user.role,
           profiles: user.profiles,
           sertifikat: user.sertifikat,
+          total_answered: user.total_answered,
         },
         token: user.token,
       });
