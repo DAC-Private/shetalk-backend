@@ -15,7 +15,8 @@ const get_comment = async (req, res) => {
         data: [],
       });
     }
-    const { page = 1, size = 10 } = req.query;
+    let { page = 1, size = 10 } = req.query;
+    page = parseInt(page) || 1;
     const offset = (page - 1) * size;
     const limit = size;
     const { count, rows: comments } = await Comment.findAndCountAll({
@@ -29,7 +30,7 @@ const get_comment = async (req, res) => {
           attributes: [
             "id",
             "name",
-            "profiles",
+            "profile",
             "role",
             "createdAt",
             "updatedAt",
@@ -82,17 +83,17 @@ const create_new_comment = async (req, res) => {
     }
 
     // Active this
-    // const post = await Post.findOne({
-    //   where: { id: post_id, user_id: req.user.id },
-    // });
-    // if (post) {
-    //   return await jsonResponse(res, {
-    //     status: 403,
-    //     success: false,
-    //     message: "Komentar tidak diizinkan di postingan milik sendiri!",
-    //     data: [],
-    //   });
-    // }
+    const post = await Post.findOne({
+      where: { id: post_id, user_id: req.user.id },
+    });
+    if (post) {
+      return await jsonResponse(res, {
+        status: 403,
+        success: false,
+        message: "Komentar tidak diizinkan di postingan milik sendiri!",
+        data: [],
+      });
+    }
 
     let data = {
       post_id: post_id,
@@ -146,11 +147,25 @@ const delete_comment = async (req, res) => {
     });
   }
 };
-const edit_comment = async (req, res) => {};
+const edit_comment = async (req, res) => { };
+const get_comments_user = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const userComments = await Comment.findAll({
+      where: { user_id: userId },
+      include: [{ model: Post, as: 'post' }]
+    });
+    res.status(200).json({ success: true, comments: userComments });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+};
 const exported_modules = {
   get_comment,
   create_new_comment,
   delete_comment,
   edit_comment,
+  get_comments_user,
 };
 module.exports = exported_modules;

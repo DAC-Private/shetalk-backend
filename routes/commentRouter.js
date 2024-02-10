@@ -10,7 +10,6 @@ const verifyAuthMiddleware = require("../middlewares/verifyAuth");
 const verifyApiKeyMiddleware = require("../middlewares/verifyApiKey");
 const checkRoleMiddleware = require("../middlewares/checkRole");
 const validator = require("../validators/");
-
 // [api/comment?post_id={id post}]
 router.get("/", verifyApiKeyMiddleware, commentController.get_comment);
 
@@ -36,4 +35,8 @@ router.delete(
   ],
   commentController.delete_comment
 );
+
+// [api/comment/users]
+router.get('/users', verifyAuthMiddleware, commentController.get_comments_user);
+
 module.exports = router;
