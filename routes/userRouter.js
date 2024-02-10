@@ -48,7 +48,7 @@ router
   .post(verifyAuthMiddleware, userController.get_user_)
   .get(verifyAuthMiddleware, userController.get_user_);
 
-// [api/user/edit]
+// [api/user/me/edit]
 router.put(
   "/me/edit",
   [validator.userValidator("edit_user"), verifyAuthMiddleware],

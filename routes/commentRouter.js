@@ -10,6 +10,7 @@ const verifyAuthMiddleware = require("../middlewares/verifyAuth");
 const verifyApiKeyMiddleware = require("../middlewares/verifyApiKey");
 const checkRoleMiddleware = require("../middlewares/checkRole");
 const validator = require("../validators/");
+
 // [api/comment?post_id={id post}]
 router.get("/", verifyApiKeyMiddleware, commentController.get_comment);
 
